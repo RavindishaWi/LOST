@@ -44,9 +44,9 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--dataset",
-        default="WiderPerson",
+        default="VOC07",
         type=str,
-        choices=[None, "WiderPerson", "VOC12", "COCO20k"],
+        choices=[None, "VOC07", "VOC12", "WiderPerson"],
         help="Dataset name.",
     )
     parser.add_argument(
@@ -108,7 +108,7 @@ if __name__ == "__main__":
             pred = np.asarray(predictions[im_name])
         elif args.type_pred == "detectron":
             name_ind = im_name
-            if "WiderPerson" in args.dataset:
+            if "VOC" in args.dataset:
                 name_ind = im_name[:-4]
 
             pred_ids = [

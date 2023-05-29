@@ -52,19 +52,19 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(
         description="Prepares the LOST pseudo-boxes from a COCO2014"
                     "dataset in the data format expected from detectron2.")
-    parser.add_argument("--coco_dir", type=str, default='../datasets/COCO',
-                        help="Path to where the WiderPerson dataset is.")
-    parser.add_argument("--pboxes", type=str, default='../outputs/COCO20k_train/LOST-vit_small16_k/preds.pkl',
-                        help="Path to where the LOST CA pseudo boxes for the WiderPersonyear trainval data are.")
+    parser.add_argument("--wider_person_dir", type=str, default='../datasets/WiderPerson',
+                        help="Path to where the VOC dataset is.")
+    parser.add_argument("--pboxes", type=str, default='../outputs/wider_person_train/LOST-vit_small16_k/preds.pkl',
+                        help="Path to where the LOST CA pseudo boxes for the VOCyear trainval data are.")
     args = parser.parse_args()
 
-    print('Prepare LOST pseudo-boxes (COCO2014) in the data format expected from detectron2.')
+    print('Prepare LOST pseudo-boxes (WiderPerson) in the data format expected from detectron2.')
 
     # Load the boxes
     with open(args.pboxes, 'rb') as handle:
         LOST_pseudo_boxes = pickle.load(handle)
 
-    annotation_file = pathlib.Path(args.coco_dir) / "annotations" / "instances_train2014.json"
+    annotation_file = pathlib.Path(args.wider_person_dir) / "annotations" / "instances_train2014.json"
     with open(annotation_file) as json_file:
         annot = json.load(json_file)
 
@@ -80,7 +80,7 @@ if __name__ == '__main__':
 
         image_id = image_name.split('_')[-1].split('.')[0]
         image_id_int = int(image_id)
-        full_img_path = pathlib.Path(args.coco_dir) / "images" / image_name
+        full_img_path = pathlib.Path(args.wider_person_dir) / "images" / image_name
         ann_id = [ind for ind, x in enumerate(annot['images']) if x['id'] == image_id_int][0]
         assert full_img_path.is_file()
 
@@ -93,12 +93,12 @@ if __name__ == '__main__':
         cnt += 1
 
     print(f'Number images saved {cnt}')
-    dataset_name = f"coco20k_train_LOST_CAD"
+    dataset_name = f"wider_person_train_LOST_CAD"
     json_data = {
         "dataset": data,
         "meta_data": {
-            "dirname": args.coco_dir,
-            "evaluator_type": "wider_person",
+            "dirname": args.wider_person_dir,
+            "evaluator_type": "pascal_voc",
             "name": dataset_name,
             "split": "train",
             "year": 2014,

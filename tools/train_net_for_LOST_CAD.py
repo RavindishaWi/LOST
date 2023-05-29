@@ -21,7 +21,7 @@ from detectron2.evaluation import (
     COCOPanopticEvaluator,
     DatasetEvaluators,
     LVISEvaluator,
-    WiderPersonDetectionEvaluator,
+    PascalVOCDetectionEvaluator,
     SemSegEvaluator,
     verify_results,
 )
@@ -33,41 +33,41 @@ from detectron2.modeling.roi_heads import ROI_HEADS_REGISTRY, Res5ROIHeads
 #********************** REGISTERING THE NECESSARY DATASETS *********************
 import json
 import detectron2.data
-def register_wider_person_in_coco_style(
-    wider_person_trainval_json_path="./datasets/wider_person_objects_trainval_CAD_coco_style.json",
-    wider_person_test_json_path="./datasets/wider_person_objects_test_CAD_coco_style.json",
+def register_voc_in_coco_style(
+    voc2007_trainval_json_path="./datasets/voc_objects_2007_trainval_CAD_coco_style.json",
+    voc2007_test_json_path="./datasets/voc_objects_2007_test_CAD_coco_style.json",
     voc2012_trainval_json_path="./datasets/voc_objects_2012_test_CAD_coco_style.json"):
 
     dataset_suffix = "coco_style"
-    wider_person_trainval_dataset_name = f"wider_person_trainval_CAD_{dataset_suffix}"
-    wider_person_test_dataset_name = f"wider_person_test_CAD_{dataset_suffix}"
-    voc2012_trainval_dataset_name = f"wider_person_trainval_CAD_{dataset_suffix}"
+    voc2007_trainval_dataset_name = f"voc_2007_trainval_CAD_{dataset_suffix}"
+    voc2007_test_dataset_name = f"voc_2007_test_CAD_{dataset_suffix}"
+    voc2012_trainval_dataset_name = f"voc_2012_trainval_CAD_{dataset_suffix}"
 
-    print(f"Registering the '{wider_person_trainval_dataset_name}' from the json file {wider_person_trainval_json_path}")
-    def wider_person_trainval_dataset_function():
-        with open(wider_person_trainval_json_path) as infile:
+    print(f"Registering the '{voc2007_trainval_dataset_name}' from the json file {voc2007_trainval_json_path}")
+    def voc2007_trainval_dataset_function():
+        with open(voc2007_trainval_json_path) as infile:
             json_data = json.load(infile)
         return json_data["dataset"]
     detectron2.data.DatasetCatalog.register(
-        wider_person_trainval_dataset_name, wider_person_trainval_dataset_function)
-    detectron2.data.MetadataCatalog.get(wider_person_trainval_dataset_name).thing_classes = ["object",]
-    detectron2.data.MetadataCatalog.get(wider_person_trainval_dataset_name).evaluator_type = "coco"
-    detectron2.data.MetadataCatalog.get(wider_person_trainval_dataset_name).split = detectron2.data.MetadataCatalog.get("wider_person_trainval").split
-    detectron2.data.MetadataCatalog.get(wider_person_trainval_dataset_name).year = detectron2.data.MetadataCatalog.get("wider_person_trainval").year
-    detectron2.data.MetadataCatalog.get(wider_person_trainval_dataset_name).name = wider_person_trainval_dataset_name
+        voc2007_trainval_dataset_name, voc2007_trainval_dataset_function)
+    detectron2.data.MetadataCatalog.get(voc2007_trainval_dataset_name).thing_classes = ["object",]
+    detectron2.data.MetadataCatalog.get(voc2007_trainval_dataset_name).evaluator_type = "coco"
+    detectron2.data.MetadataCatalog.get(voc2007_trainval_dataset_name).split = detectron2.data.MetadataCatalog.get("voc_2007_trainval").split
+    detectron2.data.MetadataCatalog.get(voc2007_trainval_dataset_name).year = detectron2.data.MetadataCatalog.get("voc_2007_trainval").year
+    detectron2.data.MetadataCatalog.get(voc2007_trainval_dataset_name).name = voc2007_trainval_dataset_name
 
-    print(f"Registering the '{wider_person_test_dataset_name}' from the json file {wider_person_test_json_path}")
-    def wider_person_test_dataset_function():
-        with open(wider_person_test_json_path) as infile:
+    print(f"Registering the '{voc2007_test_dataset_name}' from the json file {voc2007_test_json_path}")
+    def voc2007_test_dataset_function():
+        with open(voc2007_test_json_path) as infile:
             json_data = json.load(infile)
         return json_data["dataset"]
     detectron2.data.DatasetCatalog.register(
-        wider_person_test_dataset_name, wider_person_test_dataset_function)
-    detectron2.data.MetadataCatalog.get(wider_person_test_dataset_name).thing_classes = ["object",]
-    detectron2.data.MetadataCatalog.get(wider_person_test_dataset_name).evaluator_type = "coco"
-    detectron2.data.MetadataCatalog.get(wider_person_test_dataset_name).split = detectron2.data.MetadataCatalog.get("wider_person_test").split
-    detectron2.data.MetadataCatalog.get(wider_person_test_dataset_name).year = detectron2.data.MetadataCatalog.get("wider_person_test").year
-    detectron2.data.MetadataCatalog.get(wider_person_test_dataset_name).name = wider_person_test_dataset_name
+        voc2007_test_dataset_name, voc2007_test_dataset_function)
+    detectron2.data.MetadataCatalog.get(voc2007_test_dataset_name).thing_classes = ["object",]
+    detectron2.data.MetadataCatalog.get(voc2007_test_dataset_name).evaluator_type = "coco"
+    detectron2.data.MetadataCatalog.get(voc2007_test_dataset_name).split = detectron2.data.MetadataCatalog.get("voc_2007_test").split
+    detectron2.data.MetadataCatalog.get(voc2007_test_dataset_name).year = detectron2.data.MetadataCatalog.get("voc_2007_test").year
+    detectron2.data.MetadataCatalog.get(voc2007_test_dataset_name).name = voc2007_test_dataset_name
 
     print(f"Registering the '{voc2012_trainval_dataset_name}' from the json file {voc2012_trainval_json_path}")
     def voc2012_trainval_dataset_function():
@@ -83,102 +83,102 @@ def register_wider_person_in_coco_style(
     detectron2.data.MetadataCatalog.get(voc2012_trainval_dataset_name).name = voc2012_trainval_dataset_name
 
 
-def register_CAD_LOST_pseudo_boxes_for_the_wider_person_trainval_dataset(
-    wider_person_json_path="./datasets/wider_person_trainval_LOST_CAD.json",
-    wider_person_dataset_name="wider_person_trainval_LOST_CAD"):
+def register_CAD_LOST_pseudo_boxes_for_the_voc2007_trainval_dataset(
+    voc2007_json_path="./datasets/voc_2007_trainval_LOST_CAD.json",
+    voc2007_dataset_name="voc_2007_trainval_LOST_CAD"):
+
+    print(f"Registering the '{voc2007_dataset_name}' from the json file {voc2007_json_path}")
+    def voc_2007_trainval_dataset_function():
+        with open(voc2007_json_path) as infile:
+            json_data = json.load(infile)
+        return json_data["dataset"]
+    detectron2.data.DatasetCatalog.register(
+        voc2007_dataset_name, voc_2007_trainval_dataset_function)
+    detectron2.data.MetadataCatalog.get(voc2007_dataset_name).thing_classes = ["object",]
+    detectron2.data.MetadataCatalog.get(voc2007_dataset_name).evaluator_type = "coco"
+
+def register_CAD_objects_wider_person_train_dataset(image_root=None):
+    print(f"Registering the 'wider_person_train_CAD' for class agnostic object detection.")
+    def wider_person_train_ca_dataset_function():
+        wider_person_data_gt = detectron2.data.DatasetCatalog.get("wider_person_train")
+        wider_person_data_gt = copy.deepcopy(wider_person_data_gt)
+        # Make the ground bounding boxes class agnostic (i.e., give to all of
+        # them the category id 0).
+        for i in range(len(wider_person_data_gt)):
+            if image_root is not None:
+                wider_person_data_gt[i]["file_name"] = \
+                    wider_person_data_gt[i]["file_name"].replace('datasets/wider_person', image_root)
+            for j in range(len(wider_person_data_gt[i]["annotations"])):
+                wider_person_data_gt[i]["annotations"][j]["category_id"] = 0
+        return wider_person_data_gt
+    detectron2.data.DatasetCatalog.register(
+        "wider_person_train_CAD", wider_person_train_ca_dataset_function)
+    detectron2.data.MetadataCatalog.get("wider_person_train_CAD").thing_classes = ["object",]
+    detectron2.data.MetadataCatalog.get("wider_person_train_CAD").evaluator_type = "coco"
+    detectron2.data.MetadataCatalog.get("wider_person_train_CAD").name = "wider_person_train_CAD"
+
+def register_CAD_objects_wider_person_val_dataset(image_root=None):
+    print(f"Registering the 'wider_person_val_CAD' for class agnostic object detection.")
+    def wider_person_val_ca_dataset_function():
+        wider_person_data_gt = detectron2.data.DatasetCatalog.get("wider_person_val")
+        wider_person_data_gt = copy.deepcopy(wider_person_data_gt)
+        # Make the ground bounding boxes class agnostic (i.e., give to all of
+        # them the category id 0).
+        for i in range(len(wider_person_data_gt)):
+            if image_root is not None:
+                wider_person_data_gt[i]["file_name"] = \
+                    wider_person_data_gt[i]["file_name"].replace('datasets/wider_person', image_root)
+            for j in range(len(wider_person_data_gt[i]["annotations"])):
+                wider_person_data_gt[i]["annotations"][j]["category_id"] = 0
+        return wider_person_data_gt
+    detectron2.data.DatasetCatalog.register(
+        "wider_person_val_CAD", wider_person_val_ca_dataset_function)
+    detectron2.data.MetadataCatalog.get("wider_person_val_CAD").thing_classes = ["object",]
+    detectron2.data.MetadataCatalog.get("wider_person_val_CAD").evaluator_type = "coco"
+    detectron2.data.MetadataCatalog.get("wider_person_val_CAD").name = "wider_person_val_CAD"
+
+def register_CAD_wider_person_train_gt_dataset(
+    wider_person_json_path="./datasets/wider_person_trainval_CAD_gt.json",
+    wider_person_dataset_name="wider_person_train_CAD_gt"):
 
     print(f"Registering the '{wider_person_dataset_name}' from the json file {wider_person_json_path}")
-    def wider_person_trainval_dataset_function():
+    def wider_person_train_dataset_function():
         with open(wider_person_json_path) as infile:
             json_data = json.load(infile)
         return json_data["dataset"]
     detectron2.data.DatasetCatalog.register(
-        wider_person_dataset_name, wider_person_trainval_dataset_function)
+        wider_person_dataset_name, wider_person_train_dataset_function)
     detectron2.data.MetadataCatalog.get(wider_person_dataset_name).thing_classes = ["object",]
     detectron2.data.MetadataCatalog.get(wider_person_dataset_name).evaluator_type = "coco"
 
-def register_CAD_objects_coco_train_dataset(image_root=None):
-    print(f"Registering the 'coco_train_CAD' for class agnostic object detection.")
-    def coco_train_ca_dataset_function():
-        coco_data_gt = detectron2.data.DatasetCatalog.get("coco_2014_train")
-        coco_data_gt = copy.deepcopy(coco_data_gt)
-        # Make the ground bounding boxes class agnostic (i.e., give to all of
-        # them the category id 0).
-        for i in range(len(coco_data_gt)):
-            if image_root is not None:
-                coco_data_gt[i]["file_name"] = \
-                    coco_data_gt[i]["file_name"].replace('datasets/coco', image_root)
-            for j in range(len(coco_data_gt[i]["annotations"])):
-                coco_data_gt[i]["annotations"][j]["category_id"] = 0
-        return coco_data_gt
-    detectron2.data.DatasetCatalog.register(
-        "coco_train_CAD", coco_train_ca_dataset_function)
-    detectron2.data.MetadataCatalog.get("coco_train_CAD").thing_classes = ["object",]
-    detectron2.data.MetadataCatalog.get("coco_train_CAD").evaluator_type = "coco"
-    detectron2.data.MetadataCatalog.get("coco_train_CAD").name = "coco_train_CAD"
+def register_CAD_LOST_pseudo_boxes_for_the_wider_personk_trainval_dataset(
+    wider_person_json_path="./datasets/wider_person_train_LOST_CAD.json",
+    wider_person_dataset_name="wider_person_train_LOST_CAD"):
 
-def register_CAD_objects_coco_val_dataset(image_root=None):
-    print(f"Registering the 'coco_val_CAD' for class agnostic object detection.")
-    def coco_val_ca_dataset_function():
-        coco_data_gt = detectron2.data.DatasetCatalog.get("coco_2014_val")
-        coco_data_gt = copy.deepcopy(coco_data_gt)
-        # Make the ground bounding boxes class agnostic (i.e., give to all of
-        # them the category id 0).
-        for i in range(len(coco_data_gt)):
-            if image_root is not None:
-                coco_data_gt[i]["file_name"] = \
-                    coco_data_gt[i]["file_name"].replace('datasets/coco', image_root)
-            for j in range(len(coco_data_gt[i]["annotations"])):
-                coco_data_gt[i]["annotations"][j]["category_id"] = 0
-        return coco_data_gt
-    detectron2.data.DatasetCatalog.register(
-        "coco_val_CAD", coco_val_ca_dataset_function)
-    detectron2.data.MetadataCatalog.get("coco_val_CAD").thing_classes = ["object",]
-    detectron2.data.MetadataCatalog.get("coco_val_CAD").evaluator_type = "coco"
-    detectron2.data.MetadataCatalog.get("coco_val_CAD").name = "coco_val_CAD"
-
-def register_CAD_coco20k_train_gt_dataset(
-    coco_json_path="./datasets/coco20k_trainval_CAD_gt.json",
-    coco_dataset_name="coco20k_train_CAD_gt"):
-
-    print(f"Registering the '{coco_dataset_name}' from the json file {coco_json_path}")
-    def coco_train_dataset_function():
-        with open(coco_json_path) as infile:
+    print(f"Registering the '{wider_person_dataset_name}' from the json file {wider_person_json_path}")
+    def wider_person_train_dataset_function():
+        with open(wider_person_json_path) as infile:
             json_data = json.load(infile)
         return json_data["dataset"]
     detectron2.data.DatasetCatalog.register(
-        coco_dataset_name, coco_train_dataset_function)
-    detectron2.data.MetadataCatalog.get(coco_dataset_name).thing_classes = ["object",]
-    detectron2.data.MetadataCatalog.get(coco_dataset_name).evaluator_type = "coco"
-
-def register_CAD_LOST_pseudo_boxes_for_the_coco20k_trainval_dataset(
-    coco20k_json_path="./datasets/coco20k_train_LOST_CAD.json",
-    coco20k_dataset_name="coco20k_train_LOST_CAD"):
-
-    print(f"Registering the '{coco20k_dataset_name}' from the json file {coco20k_json_path}")
-    def coco20k_train_dataset_function():
-        with open(coco20k_json_path) as infile:
-            json_data = json.load(infile)
-        return json_data["dataset"]
-    detectron2.data.DatasetCatalog.register(
-        coco20k_dataset_name, coco20k_train_dataset_function)
-    detectron2.data.MetadataCatalog.get(coco20k_dataset_name).thing_classes = ["object",]
-    detectron2.data.MetadataCatalog.get(coco20k_dataset_name).evaluator_type = "coco"
+        wider_person_dataset_name, wider_person_train_dataset_function)
+    detectron2.data.MetadataCatalog.get(wider_person_dataset_name).thing_classes = ["object",]
+    detectron2.data.MetadataCatalog.get(wider_person_dataset_name).evaluator_type = "coco"
 
 
 #*******************************************************************************
 #*******************************************************************************
 # Comment out those not needed.
-# Register WiderPerson datasets
-register_wider_person_in_coco_style()
-register_CAD_LOST_pseudo_boxes_for_the_wider_person_trainval_dataset()
+# Register VOC datasets
+register_voc_in_coco_style()
+register_CAD_LOST_pseudo_boxes_for_the_voc2007_trainval_dataset()
 
 # Register COCO dataset
-register_CAD_coco20k_train_gt_dataset()
-register_CAD_objects_coco_train_dataset(image_root='../datasets/COCO/images')
-register_CAD_objects_coco_val_dataset(image_root='../datasets/COCO/images')
+register_CAD_wider_person_train_gt_dataset()
+register_CAD_objects_wider_person_train_dataset(image_root='../datasets/WiderPerson/images')
+register_CAD_objects_wider_person_val_dataset(image_root='../datasets/WiderPerson/images')
 try:
-    register_CAD_LOST_pseudo_boxes_for_the_coco20k_trainval_dataset()
+    register_CAD_LOST_pseudo_boxes_for_the_wider_person_trainval_dataset()
 except:
     print("If failing here, please make sure to construct pseudo-boxes dataset using:\
           >python tools/prepare_coco_LOST_CAD_pseudo_boxes_in_detectron2_format.py --pboxes /path/preds.pkl")
@@ -241,8 +241,8 @@ class Trainer(DefaultTrainer):
                 torch.cuda.device_count() >= comm.get_rank()
             ), "CityscapesEvaluator currently do not work with multiple machines."
             return CityscapesSemSegEvaluator(dataset_name)
-        elif evaluator_type == "wider_person":
-            return PascalWiderPersonDetectionEvaluator(dataset_name)
+        elif evaluator_type == "pascal_voc":
+            return PascalVOCDetectionEvaluator(dataset_name)
         elif evaluator_type == "lvis":
             return LVISEvaluator(dataset_name, output_dir=output_folder)
         if len(evaluator_list) == 0:

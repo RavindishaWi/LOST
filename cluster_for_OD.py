@@ -51,9 +51,9 @@ if __name__ == "__main__":
     # Dataset
     parser.add_argument(
         "--dataset",
-        default="WiderPerson",
+        default="VOC07",
         type=str,
-        choices=[None, "WiderPerson", "VOC12", "COCO20k"],
+        choices=[None, "VOC07", "VOC12", "WiderPerson"],
         help="Dataset name.",
     )
     parser.add_argument(
@@ -73,7 +73,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--pred_file",
         type=str,
-        default="outputs/WiderPerson_trainval/LOST-vit_small16_k/preds.pkl",
+        default="outputs/VOC07_trainval/LOST-vit_small16_k/preds.pkl",
         help="Predicted boxes.",
     )
 

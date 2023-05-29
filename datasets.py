@@ -62,18 +62,18 @@ class Dataset:
         self.dataset_name = dataset_name
         self.set = dataset_set
 
-        if dataset_name == "WiderPerson":
-            self.root_path = "datasets/WiderPerson"
+        if dataset_name == "VOC07":
+            self.root_path = "datasets/VOC2007"
             self.year = "2007"
         elif dataset_name == "VOC12":
             self.root_path = "datasets/VOC2012"
             self.year = "2012"
-        elif dataset_name == "COCO20k":
+        elif dataset_name == "WiderPerson":
             self.year = "2014"
-            self.root_path = f"datasets/COCO/images/{dataset_set}{self.year}"
-            self.sel20k = 'datasets/coco_20k_filenames.txt'
-            # JSON file constructed based on COCO train2014 gt 
-            self.all_annfile = "datasets/COCO/annotations/instances_train2014.json"
+            self.root_path = f"datasets/WiderPerson/images/{dataset_set}{self.year}"
+            self.sel20k = 'datasets/wider_person_filenames.txt'
+            # JSON file constructed based on WiderPerson train2014 gt
+            self.all_annfile = "datasets/WiderPerson/annotations/instances_train2014.json"
             self.annfile = "datasets/instances_train2014_sel20k.json"
             if not os.path.exists(self.annfile):
                 select_coco_20k(self.sel20k, self.all_annfile)
@@ -86,15 +86,15 @@ class Dataset:
         self.name = f"{self.dataset_name}_{self.set}"
 
         # Build the dataloader
-        if "WiderPerson" in dataset_name:
-            self.dataloader = torchvision.datasets.WiderPersonDetection(
+        if "VOC" in dataset_name:
+            self.dataloader = torchvision.datasets.VOCDetection(
                 self.root_path,
                 year=self.year,
                 image_set=self.set,
                 transform=transform,
                 download=False,
             )
-        elif "COCO20k" == dataset_name:
+        elif "WiderPerson" == dataset_name:
             self.dataloader = torchvision.datasets.CocoDetection(
                 self.root_path, annFile=self.annfile, transform=transform
             )
@@ -113,11 +113,11 @@ class Dataset:
         """
         Load the image corresponding to the im_name
         """
-        if "WiderPerson" in self.dataset_name:
-            image = skimage.io.imread(f"/datasets_local/WiderPerson{self.year}/JPEGImages/{im_name}")
-        elif "COCO" in self.dataset_name:
+        if "VOC" in self.dataset_name:
+            image = skimage.io.imread(f"/datasets_local/VOC{self.year}/JPEGImages/{im_name}")
+        elif "WiderPerson" in self.dataset_name:
             im_path = self.path_20k[self.sel_20k.index(im_name)]
-            image = skimage.io.imread(f"/datasets_local/COCO/images/{im_path}")
+            image = skimage.io.imread(f"/datasets_local/WiderPerson/images/{im_path}")
         else:
             raise ValueError("Unkown dataset.")
         return image
@@ -126,25 +126,25 @@ class Dataset:
         """
         Return the image name
         """
-        if "WiderPerson" in self.dataset_name:
+        if "VOC" in self.dataset_name:
             im_name = inp["annotation"]["filename"]
-        elif "COCO" in self.dataset_name:
+        elif "WiderPerson" in self.dataset_name:
             im_name = str(inp[0]["image_id"])
 
         return im_name
 
     def extract_gt(self, targets, im_name):
-        if "WiderPerson" in self.dataset_name:
-            return extract_gt_WiderPerson(targets, remove_hards=self.remove_hards)
-        elif "COCO" in self.dataset_name:
-            return extract_gt_COCO(targets, remove_iscrowd=True)
+        if "VOC" in self.dataset_name:
+            return extract_gt_VOC(targets, remove_hards=self.remove_hards)
+        elif "WiderPerson" in self.dataset_name:
+            return extract_gt_WiderPerson(targets, remove_iscrowd=True)
         else:
             raise ValueError("Unknown dataset")
 
     def extract_classes(self):
-        if "WiderPerson" in self.dataset_name:
+        if "VOC" in self.dataset_name:
             cls_path = f"classes_{self.set}_{self.year}.txt"
-        elif "COCO" in self.dataset_name:
+        elif "WiderPerson" in self.dataset_name:
             cls_path = f"classes_{self.dataset}_{self.set}_{self.year}.txt"
 
         # Load if exists
@@ -155,10 +155,10 @@ class Dataset:
                     all_classes.append(line.strip())
         else:
             print("Extract all classes from the dataset")
-            if "WiderPerson" in self.dataset_name:
+            if "VOC" in self.dataset_name:
+                all_classes = self.extract_classes_VOC()
+            elif "WiderPerson" in self.dataset_name:
                 all_classes = self.extract_classes_WiderPerson()
-            elif "COCO" in self.dataset_name:
-                all_classes = self.extract_classes_COCO()
 
             with open(cls_path, "w") as f:
                 for s in all_classes:
@@ -166,7 +166,7 @@ class Dataset:
 
         return all_classes
 
-    def extract_classes_WiderPerson(self):
+    def extract_classes_VOC(self):
         all_classes = []
         for im_id, inp in enumerate(tqdm(self.dataloader)):
             objects = inp[1]["annotation"]["object"]
@@ -177,7 +177,7 @@ class Dataset:
 
         return all_classes
 
-    def extract_classes_COCO(self):
+    def extract_classes_WiderPerson(self):
         all_classes = []
         for im_id, inp in enumerate(tqdm(self.dataloader)):
             objects = inp[1]
@@ -198,9 +198,9 @@ class Dataset:
         else:
             print("Discover hard images that should be discarded")
 
-            if "WiderPerson" in self.dataset_name:
+            if "VOC" in self.dataset_name:
                 # set the hards
-                hards = discard_hard_wider_person(self.dataloader)
+                hards = discard_hard_voc(self.dataloader)
 
             with open(hard_path, "w") as f:
                 for s in hards:
@@ -209,7 +209,7 @@ class Dataset:
         return hards
 
 
-def discard_hard_wider_person(dataloader):
+def discard_hard_voc(dataloader):
     hards = []
     for im_id, inp in enumerate(tqdm(dataloader)):
         objects = inp[1]["annotation"]["object"]
@@ -229,7 +229,7 @@ def discard_hard_wider_person(dataloader):
     return hards
 
 
-def extract_gt_COCO(targets, remove_iscrowd=True):
+def extract_gt_WiderPerson(targets, remove_iscrowd=True):
     objects = targets
     nb_obj = len(objects)
 
@@ -249,7 +249,7 @@ def extract_gt_COCO(targets, remove_iscrowd=True):
     return np.asarray(gt_bbxs), gt_clss
 
 
-def extract_gt_WiderPerson(targets, remove_hards=False):
+def extract_gt_VOC(targets, remove_hards=False):
     objects = targets["annotation"]["object"]
     nb_obj = len(objects)
 
@@ -334,8 +334,8 @@ def bbox_iou(box1, box2, x1y1x2y2=True, GIoU=False, DIoU=False, CIoU=False, eps=
     else:
         return iou  # IoU
 
-def select_coco_20k(sel_file, all_annotations_file):
-    print('Building COCO 20k dataset.')
+def select_wider_person(sel_file, all_annotations_file):
+    print('Building WiderPerson 20k dataset.')
 
     # load all annotations
     with open(all_annotations_file, "r") as f:

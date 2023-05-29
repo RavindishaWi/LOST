@@ -3,7 +3,7 @@ MODEL:
   RPN:
     PRE_NMS_TOPK_TEST: 6000
     POST_NMS_TOPK_TEST: 1000
-  WEIGHTS: "/path/to/dino/weights.pkl"
+  WEIGHTS: "data/dino_RN50_pretrain_d2_format.pkl"
   MASK_ON: False
   RESNETS:
     DEPTH: 50
@@ -25,16 +25,16 @@ INPUT:
   MIN_SIZE_TEST: 800
   FORMAT: "RGB"
 DATASETS:
-  TRAIN: ('wider_person_trainval_LOST_CAD', )
-  TEST: ('wider_person_test_CAD_coco_style', )
+  TRAIN: ('widerperson_train', )  # Modify the dataset name
+  TEST: ('widerperson_val', )    # Modify the dataset name
 TEST:
   EVAL_PERIOD: 5000
   PRECISE_BN:
     ENABLED: True
 SOLVER:
   STEPS: (18000, 22000)
-  MAX_ITER: 10000
-  WARMUP_ITERS: 100 # Maybe needs tuning.
+  MAX_ITER: 24000
+  WARMUP_ITERS: 100   # Maybe needs tuning.
   IMS_PER_BATCH: 16
-  BASE_LR: 0.02 # Maybe it will need some tuning. MoCo used 0.02.
-OUTPUT_DIR: "./outputs/RN50_DINO_FRCNN_WIDERPERSON_CAD"
+  BASE_LR: 0.02        # Maybe it will need some tuning. MoCo used 0.02.
+OUTPUT_DIR: "./outputs/RN50_DINO_FRCNN_WiderPerson"  # Modify the output directory
